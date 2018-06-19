@@ -1,0 +1,20 @@
+emdrive:
+    server_name: main # in case app is running on multiple servers this has to be unique
+    pool_size: 5 # number of simultaneous commands allowed to be execute
+    tick_interval: 2000000 # interval in microseconds between service loop checks
+    cmd_start: bin/console %s -vv -e prod > /dev/null 2>&1 & # template for scheduled commands to be executed with
+    cmd_kill: kill -2 %s > /dev/null 2>&1 & # template for scheduled commands to be stopped with
+
+    storage:
+        dsn: '%env(DATABASE_URL)%' # dsn for mysql or sqlite database to store schedule
+
+    lock: emdrive_lock # lock name that is configured in framework section
+    pid_dir: var/pid # directory to store process ids for executed commands
+    log_dir: var/elog # directory to store logs
+    lock_dir: var/lock # directory to store lock files
+
+framework:
+    lock:
+        enabled: true
+        resources:
+            emdrive_lock: flock
